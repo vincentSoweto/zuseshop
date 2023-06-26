@@ -1,82 +1,75 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import {SafeAreaView, StyleSheet} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 import LoginView from './src/views/LoginView';
 import HomeView from './src/views/HomeView';
 import ProductCreation from './src/views/ProductCreationView';
-import ProductDetail from './src/views/ProductDetailsScreen';
+import ProductDetailScreen from './src/views/ProductDetailsScreen';
 
 const Stack = createNativeStackNavigator();
- 
-function App() {
+const Tab = createBottomTabNavigator();
 
+function HomeTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = focused ? 'Home' : 'home-outline';
+          } else if (route.name === 'Create Product') {
+            iconName = focused ? 'add' : 'add-outline';
+          }
+
+          return <MaterialIcon name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'blue',
+        tabBarInactiveTintColor: 'gray',
+      })}>
+      <Tab.Screen name="Home" component={HomeView} />
+      <Tab.Screen name="Create Product" component={ProductCreation} />
+    </Tab.Navigator>
+  );
+}
+
+function App() {
   return (
     <NavigationContainer>
-    <SafeAreaView style={styles.container}>
-        {/* <LoginView/> */}
-        <Stack.Screen
-          name="Login"
-          component={LoginView}
-          options={{title: 'Login'}}
-        />
-        <Stack.Screen
-          name="Home"
-          component={HomeView}
-          options={{title: 'Welcome'}}
-        />
-        <Stack.Screen
-          name="Home"
-          component={ProductCreation}
-          options={{title: 'Create Product'}}
-        />
-        <Stack.Screen
-          name="Home"
-          component={ProductDetail}
-          options={{title: 'Product Details'}}
-        />
-    </SafeAreaView>
+      <SafeAreaView style={styles.container}>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Screen
+            name="Login"
+            component={LoginView}
+            options={{title: 'Login'}}
+          />
+          <Stack.Screen
+            name="Home"
+            component={HomeTabs}
+            options={{title: 'Welcome'}}
+          />
+          <Stack.Screen
+            name="Details"
+            component={ProductDetailScreen}
+            options={{title: 'Product Details'}}
+          />
+        </Stack.Navigator>
+      </SafeAreaView>
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
-    borderWidth:2,
-    borderColor:'green'
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  container: {
+    flex: 1,
   },
 });
 
